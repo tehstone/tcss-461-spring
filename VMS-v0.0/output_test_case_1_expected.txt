@@ -1,0 +1,36 @@
+
+Please enter an action...
+1 = Add Recipe
+2 = Delete Recipe
+3 = Add Inventory
+4 = Check Inventory
+5 = Buy Item
+6 = Customer Analysis
+7 = Exit
+
+=> 
+Enter name of recipe:
+Enter price of recipe, in decimal format (0.00):
+$ Enter units of sugar:
+Enter units of milk:
+Enter units of coffee:
+Enter units of chocolate:
+Enter units of bouillon:
+Name: grisling
+ Price: 34.99
+ Sugar: 10
+ Milk: 2
+ Coffee: 5
+ Chocolate: 1
+ Bouillon: 0
+
+Please enter an action...
+1 = Add Recipe
+2 = Delete Recipe
+3 = Add Inventory
+4 = Check Inventory
+5 = Buy Item
+6 = Customer Analysis
+7 = Exit
+
+=> 
