@@ -4,7 +4,7 @@ import java.util.*;
 import java.text.*;
 
 class TacomaVendingMachine {
-	Recipe[] recipeArray = new Recipe[6];
+	Recipe[] recipeArray;
 	Ingredients data = new Ingredients(0, 0, 0, 0, 0);
 	int i = 0;
 	double money = 0;
@@ -17,7 +17,7 @@ class TacomaVendingMachine {
 	public PrintStream ps;
 
 	public TacomaVendingMachine() {
-
+		clearAll();
 		startVend();
 	}
 
@@ -36,9 +36,6 @@ class TacomaVendingMachine {
 		System.out.println("");
 		System.out.println("");
 		System.out.println("");
-		for (int i = 0; i < 6; i++) {
-			recipeArray[i] = new Recipe();
-		}
 		mainMenu();
 	}
 
@@ -53,9 +50,8 @@ class TacomaVendingMachine {
 
 	public void clearAll() {
 		// Deleting recipes
-		for (int i = 0; i < 6; i++) {
-			recipeArray[i] = new Recipe();
-		}
+		recipeArray = new Recipe[6];
+		
 		// Deleting stock
 		data.setUnits_bou(0);
 		data.setUnits_cho(0);
@@ -345,7 +341,7 @@ class TacomaVendingMachine {
 			return;
 		}
 
-		recipeArray[num_select] = new Recipe();
+		recipeArray[num_select] = null;
 		System.out.println("Recipe deleted!");
 		mainMenu();
 		return;
@@ -356,7 +352,7 @@ class TacomaVendingMachine {
 
 		System.out.println("Please select item to buy: ");
 		for (int n = 0; n < 6; n++) {
-			if (recipeArray[n].name != "") {
+			if (recipeArray[n] != null) {
 				System.out.println(" " + n + ": " + recipeArray[n].name + " $ "
 						+ recipeArray[n].price);
 			} else {
