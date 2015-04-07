@@ -5,7 +5,7 @@ import java.text.*;
 
 class TacomaVendingMachine {
 	Recipe[] recipeArray;
-	Ingredients data = new Ingredients(0, 0, 0, 0, 0);
+	Ingredients data = new Ingredients();
 	int i = 0;
 	double money = 0;
 	double extra = 0;
@@ -51,13 +51,10 @@ class TacomaVendingMachine {
 	public void clearAll() {
 		// Deleting recipes
 		recipeArray = new Recipe[6];
-		
+
 		// Deleting stock
-		data.setUnits_bou(0);
-		data.setUnits_cho(0);
-		data.setUnits_cof(0);
-		data.setUnits_mil(0);
-		data.setUnits_sug(0);
+		data = new Ingredients();
+
 		// Deleting history
 		totalDrinksSold = 0;
 	}
@@ -74,91 +71,55 @@ class TacomaVendingMachine {
 		int inv_bou;
 		System.out.println("");
 		System.out.println("");
+
 		try {
-			System.out.println("Enter units of sugar: ");
-			try {
-				if ((line = br.readLine()) == null) {
-					System.out
-							.println("Please enter an amount next time, going back to Main Menu");
-					mainMenu();
-					return;
-				} else {
-					inv_sug = Integer.parseInt(line);
-					data.setUnits_sug(data.getUnits_sug() + inv_sug);
-				}
-			} catch (NumberFormatException n) {
-				System.out
-						.println("Please enter an amount next time, going back to Main Menu");
-				mainMenu();
-				return;
+
+			for (int i = 0; i < data.myItems.length; i++) {
+				data.setItemAmount(data.myItems[i],
+						addInventoryItem(data.myItems[i]));
 			}
-			System.out.println("Enter units of milk: ");
-			try {
-				if ((line = br.readLine()) == null) {
-				} else {
-					inv_mil = Integer.parseInt(line);
-					data.setUnits_mil(data.getUnits_mil() + inv_mil);
-				}
-			} catch (NumberFormatException n) {
-				System.out
-						.println("Please enter an amount next time, going back to Main Menu");
-				mainMenu();
-				return;
-			}
-			System.out.println("Enter units of coffee: ");
-			try {
-				if ((line = br.readLine()) == null) {
-				} else {
-					inv_cof = Integer.parseInt(line);
-					data.setUnits_cof(data.getUnits_cof() + inv_cof);
-				}
-			} catch (NumberFormatException n) {
-				System.out
-						.println("Please enter an amount next time, going back to Main Menu");
-				mainMenu();
-				return;
-			}
-			System.out.println("Enter units of chocolate: ");
-			try {
-				if ((line = br.readLine()) == null) {
-				} else {
-					inv_cho = Integer.parseInt(line);
-					data.setUnits_cho(data.getUnits_cho() + inv_cho);
-				}
-			} catch (NumberFormatException n) {
-				System.out
-						.println("Please enter an amount next time, going back to Main Menu");
-				mainMenu();
-				return;
-			}
-			System.out.println("Enter units of bouillon: ");
-			try {
-				if ((line = br.readLine()) == null) {
-				} else {
-					inv_bou = Integer.parseInt(line);
-					data.setUnits_bou(data.getUnits_bou() + inv_bou);
-				}
-			} catch (NumberFormatException n) {
-				System.out
-						.println("Please enter an amount next time, going back to Main Menu");
-				mainMenu();
-				return;
-			}
+
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
+
 		System.out.println();
 		System.out.println("Inventory added, thank you");
 		mainMenu();
-		return;
+
+	}
+
+	/**
+	 * @throws IOException
+	 */
+	public int addInventoryItem(final String theItemName) throws IOException {
+		String line;
+		int item_units = 0;
+		System.out.println("Enter units of " + theItemName + ": ");
+		try {
+			line = br.readLine();
+			item_units = Integer.parseInt(line);
+			// data.setUnits_sug(data.getUnits_sug() + Integer.parseInt(line));
+
+		} catch (NumberFormatException n) {
+			System.out
+					.println("Please enter an amount next time, going back to Main Menu");
+			mainMenu();
+
+		} catch (NullPointerException e) {
+			System.out.println("No data is bad data...");
+			System.out.println("Back to main menu");
+			mainMenu();
+		}
+		return item_units;
 	}
 
 	public void CheckInventory() {
 		System.out.println("");
-		System.out.println("Sugar: " + data.getUnits_sug());
-		System.out.println("Milk: " + data.getUnits_mil());
-		System.out.println("Coffee: " + data.getUnits_cof());
-		System.out.println("Chocolate: " + data.getUnits_cho());
-		System.out.println("Bouillon: " + data.getUnits_bou());
+		for (int i = 0; i < data.myItems.length; i++) {
+			System.out.println(data.myItems[i] + ": "
+					+ data.getItemAmount(data.myItems[i]));
+		}
 		System.out.println("");
 		mainMenu();
 		return;
@@ -166,7 +127,7 @@ class TacomaVendingMachine {
 
 	public int checkRecipes() {
 		for (int i = 0; i < 6; i++) {
-			if (recipeArray[i].name == "") {
+			if (recipeArray[i] == null) {
 				return i;
 			}
 		}
@@ -392,11 +353,15 @@ class TacomaVendingMachine {
 		String num = "";
 		try {
 			try {
-				if (recipeArray[item].sugar <= data.getUnits_sug()
-						&& recipeArray[item].milk <= data.getUnits_mil()
-						&& recipeArray[item].coffee <= data.getUnits_cof()
-						&& recipeArray[item].chocolate <= data.getUnits_cho()
-						&& recipeArray[item].bouillon <= data.getUnits_bou()) {//
+				boolean lessThan = true;
+				int index = 0;
+				while (lessThan && index < recipeArray[item].ingredients.myItems.length) {
+					lessThan = (recipeArray[item].ingredients
+							.getItemAmount(data.myItems[index]) <= data
+							.getItemAmount(data.myItems[index]));
+					index++;
+				}
+				if (lessThan) {//
 					// gets money
 					difference = money - recipeArray[item].price;
 				} else {
@@ -466,11 +431,12 @@ class TacomaVendingMachine {
 			}
 		} catch (IOException e) {
 		}
-		data.setUnits_sug(data.getUnits_sug() - recipeArray[item].sugar);
-		data.setUnits_mil(data.getUnits_mil() - recipeArray[item].milk);
-		data.setUnits_cof(data.getUnits_cof() - recipeArray[item].coffee);
-		data.setUnits_cho(data.getUnits_cho() - recipeArray[item].chocolate);
-		data.setUnits_bou(data.getUnits_bou() - recipeArray[item].bouillon);
+		for (int i = 0; i < data.myItems.length; i++) {
+			data.setItemAmount(data.myItems[i],
+					data.getItemAmount(data.myItems[i])
+							- recipeArray[item].ingredients
+							.getItemAmount(data.myItems[i]));
+		}
 		System.out.println("Thank You.");
 		mainMenu();
 		return;
