@@ -61,14 +61,6 @@ class TacomaVendingMachine {
 
 	public void AddInventory() {
 
-		ObjectInputStream input = null;
-		String line = "";
-		int num = 0;
-		int inv_sug;
-		int inv_mil;
-		int inv_cof;
-		int inv_cho;
-		int inv_bou;
 		System.out.println("");
 		System.out.println("");
 
@@ -135,127 +127,98 @@ class TacomaVendingMachine {
 	}// end checkRecipes
 		// adds a recipe
 
-	public void AddRecipe() throws NumberFormatException {
-		int empty = 0;
-
-		InputStreamReader in = new InputStreamReader(System.in);
-		// check to see if there is space in array. returns 13 if space is
-		// unavailable
-		empty = checkRecipes();
-		if (empty == 13) {
-			System.out.println("Already 6 recipes made, no more!");
-			System.out.println("");
-			mainMenu();
-			return;
-		} else {
-			i = empty;
-		}
-		// Variables to hold input
-		String rec_name = "";
-		String temp = ""; // holds name
-		int numtemp = 0; // error checking for integer input
-		double rec_price = 0.0;
-		int rec_sugar = 0;
-		int rec_milk = 0;
-		int rec_coffee = 0;
-		int rec_chocolate = 0;
-		int rec_bouillon = 0;
+	private double getRecipePrice() {
+		System.out.println("Enter price of recipe, in decimal format (0.00):");
+		System.out.print("$ ");
+		double price = 0;
 		try {
-			// get name
-			System.out.println("");
-			System.out.println("Enter name of recipe:");
+			price = Double.parseDouble(br.readLine());
+
+		} catch (NumberFormatException | IOException e) {
+			e.printStackTrace();
+		}
+
+		return price;
+	}
+
+	private String getRecipeName() {
+		String temp = null;
+		System.out.println("");
+		System.out.println("Enter name of recipe:");
+		try {
 			temp = br.readLine();
 			if (temp == null) {
 				System.out
 						.println("Please enter a name next time, going back to Main Menu");
 				mainMenu();
-				return;
-			} else {
-				rec_name = temp;
 			}
-			System.out
-					.println("Enter price of recipe, in decimal format (0.00):");
-			System.out.print("$ ");
-			try {
-				if ((temp = br.readLine()) == null) {
-				} else {
-					rec_price = Double.parseDouble(temp);
-				}
-			} catch (NumberFormatException n) {
-				System.out
-						.println("Please enter an amount next time, going back to Main Menu");
-				mainMenu();
-				return;
-			}
-			System.out.println("Enter units of sugar:");
-			try {
-				if ((temp = br.readLine()) == null) {
-				} else {
-					rec_sugar = Integer.parseInt(temp);
-				}
-			} catch (NumberFormatException n) {
-				System.out
-						.println("Please enter an amount next time, going back to Main Menu");
-				mainMenu();
-				return;
-			}
-			// get milk
-			System.out.println("Enter units of milk:");
-			numtemp = br.read();
-			if (Character.isDigit((char) numtemp)) {
-				rec_milk = (numtemp - 48);
-			} else {
-				System.out
-						.println("Please enter an amount next time, going back to Main Menu");
-				mainMenu();
-				return;
-			}
-			temp = br.readLine();
-			// get coffee
-			System.out.println("Enter units of coffee:");
-			numtemp = br.read();
-			if (Character.isDigit((char) numtemp)) {
-				rec_coffee = (numtemp - 48);
-			} else {
-				System.out
-						.println("Please enter an amount next time, going back to Main Menu");
-				mainMenu();
-				return;
-			}
-			temp = br.readLine();
-			System.out.println("Enter units of chocolate:");
-			numtemp = br.read();
-			if (Character.isDigit((char) numtemp)) {
-				rec_chocolate = (numtemp - 48);
-			} else {
-				System.out
-						.println("Please enter an amount next time, going back to Main Menu");
-				mainMenu();
-				return;
-			}
-			temp = br.readLine();
-			System.out.println("Enter units of bouillon:");
-			numtemp = br.read();
-			if (Character.isDigit((char) numtemp)) {
-				rec_bouillon = (numtemp - 48);
-			} else {
-				System.out
-						.println("Please enter an amount next time, going back to Main Menu");
-				mainMenu();
-				return;
-			}
-			temp = br.readLine();
-			System.out.println("Name: " + rec_name + "\n Price: " + rec_price
-					+ "\n Sugar: " + rec_sugar + "\n Milk: " + rec_milk
-					+ "\n Coffee: " + rec_coffee + "\n Chocolate: "
-					+ rec_chocolate + "\n Bouillon: " + rec_bouillon);
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		recipeArray[i] = new Recipe(rec_name, rec_price, rec_sugar, rec_milk,
-				rec_coffee, rec_chocolate, rec_bouillon);
+		return temp;
+	}
+
+	private Recipe setRecipeInfo() {
+
+		Recipe newRecipe = new Recipe();
+		newRecipe.price = getRecipePrice();
+		newRecipe.name = getRecipeName();
+		try {
+			for (int i = 0; i < newRecipe.ingredients.myItems.length; i++) {
+				System.out.println("Enter units of "
+						+ newRecipe.ingredients.myItems[i] + ": ");
+				int numtemp;
+
+				numtemp = br.read();
+
+				if (Character.isDigit((char) numtemp)) {
+					newRecipe.ingredients.setItemAmount(
+							newRecipe.ingredients.myItems[i], (numtemp - 48));
+				} else {
+					System.out
+							.println("Please enter an amount next time, going back to Main Menu");
+					mainMenu();
+				}
+			}
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+		return newRecipe;
+	}
+
+	public void AddRecipe() throws NumberFormatException {
+		int empty = checkRecipes();
+		System.out.println("");
+		System.out.println("");
+		if (empty == 13) {
+			System.out.println("Already 6 recipes made, no more!");
+			System.out.println("");
+			mainMenu();
+
+		} else {
+
+			recipeArray[empty] = setRecipeInfo();
+
+			System.out.println();
+			System.out.println("Inventory added, thank you");
+			mainMenu();
+		}
+
+		System.out.println("Name: " + recipeArray[empty].name + "\n Price: "
+				+ recipeArray[empty].price + "\n Sugar: "
+				+ recipeArray[empty].ingredients.getItemAmount("sugar")
+				+ "\n Milk: "
+				+ recipeArray[empty].ingredients.getItemAmount("milk")
+				+ "\n Coffee: "
+				+ recipeArray[empty].ingredients.getItemAmount("coffee")
+				+ "\n Chocolate: "
+				+ recipeArray[empty].ingredients.getItemAmount("chocolate")
+				+ "\n Bouillon: "
+				+ recipeArray[empty].ingredients.getItemAmount("bouillon"));
+
 		i++;
 		mainMenu();
-		return;
 	}// end AddRecipe
 
 	public void DeleteRecipe() throws NumberFormatException {
@@ -355,7 +318,8 @@ class TacomaVendingMachine {
 			try {
 				boolean lessThan = true;
 				int index = 0;
-				while (lessThan && index < recipeArray[item].ingredients.myItems.length) {
+				while (lessThan
+						&& index < recipeArray[item].ingredients.myItems.length) {
 					lessThan = (recipeArray[item].ingredients
 							.getItemAmount(data.myItems[index]) <= data
 							.getItemAmount(data.myItems[index]));
@@ -432,10 +396,11 @@ class TacomaVendingMachine {
 		} catch (IOException e) {
 		}
 		for (int i = 0; i < data.myItems.length; i++) {
-			data.setItemAmount(data.myItems[i],
+			data.setItemAmount(
+					data.myItems[i],
 					data.getItemAmount(data.myItems[i])
 							- recipeArray[item].ingredients
-							.getItemAmount(data.myItems[i]));
+									.getItemAmount(data.myItems[i]));
 		}
 		System.out.println("Thank You.");
 		mainMenu();
