@@ -27,4 +27,14 @@ public class Recipe {
 		this.price = price;
 		timesSold = 0;
 	}
+	
+	/**
+	 * Public method to return the change to the user. 
+	 * @param money received
+	 * @param change given
+	 * 
+	 */
+	public double getChange(final double money) {
+		return money - this.price;
+	}
 }

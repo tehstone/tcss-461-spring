@@ -363,7 +363,7 @@ class TacomaVendingMachine {
 				}
 				if (lessThan) {//
 					// gets money
-					difference = money - recipeArray[item].price;
+					difference = recipeArray[item].getChange(money);
 				} else {
 					System.out.println("Insufficient inventory.");
 					System.out.println("Change returned: " + money);
