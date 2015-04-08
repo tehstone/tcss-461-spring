@@ -65,7 +65,6 @@ class TacomaVendingMachine {
 		System.out.println("");
 
 		try {
-
 			for (int i = 0; i < data.myItems.length; i++) {
 				data.setItemAmount(data.myItems[i],
 						addInventoryItem(data.myItems[i]));
